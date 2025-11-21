@@ -9,7 +9,7 @@ RANDOM_STATE=42 # randomness
 N_JOBS=-1 # number of cores -1 is maximum
 
 # Load data
-df = pd.read_csv("./air+quality/AirQualityUCI_imputed_robust_scaled.csv")
+df = pd.read_csv("./air+quality/AirQualityUCI_standard_scaled.csv")
 df["Timestamp"] = pd.to_datetime(df["Timestamp"])
 
 # Discretise CO(GT)
