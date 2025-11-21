@@ -10,20 +10,8 @@ N_JOBS=-1 # number of cores -1 is maximum
 
 # Load data
 df = pd.read_csv("./air+quality/AirQualityUCI_standard_scaled.csv")
+
 df["Timestamp"] = pd.to_datetime(df["Timestamp"])
-
-# Discretise CO(GT)
-def discretise_co(value):
-    if pd.isna(value):  # Add this check
-        return np.nan
-    if value < 1.5:
-        return "low"
-    elif value < 2.5:
-        return "mid"
-    else:
-        return "high"
-
-df["CO_class"] = df["CO(GT)"].apply(discretise_co)
 
 # Creat shifted targets for prediction
 shift_hours = [1, 6, 12, 24]
