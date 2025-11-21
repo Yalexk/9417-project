@@ -77,6 +77,19 @@ impute_cols = [
 imputer = KNNImputer(n_neighbors=5, weights="uniform")
 df[impute_cols] = pd.DataFrame(imputer.fit_transform(df[impute_cols]), columns=impute_cols)
 
+# Discretise co class with a new feature column
+def discretise_co(value):
+    if pd.isna(value):
+        return np.nan
+    if value < 1.5:
+        return "low"
+    elif value < 2.5:
+        return "mid"
+    else:
+        return "high"
+
+df["CO_class"] = df["CO(GT)"].apply(discretise_co)
+
 # scaled variants
 df_std = df.copy()
 df_min = df.copy()
