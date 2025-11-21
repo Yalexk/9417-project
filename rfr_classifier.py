@@ -10,6 +10,7 @@ N_JOBS=-1 # number of cores -1 is maximum
 
 # Load data
 df = pd.read_csv("./air+quality/AirQualityUCI_standard_scaled.csv")
+df["Timestamp"] = pd.to_datetime(df["Timestamp"])
 
 df["Timestamp"] = pd.to_datetime(df["Timestamp"])
 
