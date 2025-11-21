@@ -4,8 +4,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
 # Hyperparameters
-N_ESTIMATORS=300 # number of trees
-RANDOM_STATE=42 # randomness
+N_ESTIMATORS=400 # number of trees
+RANDOM_STATE=41 # randomness
 N_JOBS=-1 # number of cores -1 is maximum
 
 # Load data
