@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
+from sklearn.impute import KNNImputer
 
 in_file = 'air+quality/AirQualityUCI.csv'
 out_file = 'air+quality/AirQualityUCI_with_timestamp.csv'
@@ -52,11 +53,29 @@ dont_scale = {
     'Hour','Weekday','Month','DayOfMonth','DayOfYear','Week','IsWeekend',
     'Hour_sin','Hour_cos','Month_sin','Month_cos','Weekday_sin','Weekday_cos'
 }
-num_cols = df.select_dtypes(include=['float64', 'int64']).columns.tolist()
-num_cols = [c for c in num_cols if c not in dont_scale]
 
 # save unscaled
 df.to_csv(out_file, index=False)
+
+# impute missing values using knn
+impute_cols = [
+    'CO(GT)',
+    'PT08.S1(CO)',
+    'NMHC(GT)',
+    'C6H6(GT)',
+    'PT08.S2(NMHC)',
+    'NOx(GT)',
+    'PT08.S3(NOx)',
+    'NO2(GT)',
+    'PT08.S4(NO2)',
+    'PT08.S5(O3)',
+    'T',
+    'RH',
+    'AH'
+]
+
+imputer = KNNImputer(n_neighbors=5, weights="uniform")
+df[impute_cols] = pd.DataFrame(imputer.fit_transform(df[impute_cols]), columns=impute_cols)
 
 # scaled variants
 df_std = df.copy()
@@ -68,9 +87,9 @@ sc_std = StandardScaler() # good for if data is normally distributed
 sc_min = MinMaxScaler() # good for getting bounded values
 sc_rob = RobustScaler() # good if data has outliers
 
-df_std[num_cols] = sc_std.fit_transform(df[num_cols])
-df_min[num_cols] = sc_min.fit_transform(df[num_cols])
-df_rob[num_cols] = sc_rob.fit_transform(df[num_cols])
+df_std[impute_cols] = sc_std.fit_transform(df[impute_cols])
+df_min[impute_cols] = sc_min.fit_transform(df[impute_cols])
+df_rob[impute_cols] = sc_rob.fit_transform(df[impute_cols])
 
 df_std.to_csv('air+quality/AirQualityUCI_standard_scaled.csv', index=False)
 df_min.to_csv('air+quality/AirQualityUCI_minmax_scaled.csv', index=False)
