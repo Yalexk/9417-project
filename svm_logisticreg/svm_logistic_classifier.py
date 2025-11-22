@@ -107,7 +107,7 @@ for k in [f"t+{h}" for h in HORIZONS]:
     naive = baseline_results.get(k, np.nan)
     lr = lr_results.get(k, np.nan)
     improvement = lr - naive if not np.isnan(lr) and not np.isnan(naive) else np.nan
-    print(f"{k:7} | {lr:12.4f} | {naive:13.4f} | {improvement:+11.4f}")
+    print(f"{k:7} | {lr:12.4f} | {naive:14.4f} | {improvement:+11.4f}")
 
 # SVM Comparison
 print("\n=== SVM Comparison ===")
@@ -160,4 +160,4 @@ label(LR_bars)
 label(SVM_bars)
 
 plt.tight_layout()
-plt.savefig('svm_logisticreg/svm_logistic_comparison.png', dpi=300)
+plt.savefig('svm_logistic_comparison.png', dpi=300)

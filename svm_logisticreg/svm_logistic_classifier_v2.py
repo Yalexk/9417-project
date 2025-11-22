@@ -160,4 +160,4 @@ label(LR_bars)
 label(SVM_bars)
 
 plt.tight_layout()
-plt.savefig('svm_logisticreg/svm_logistic_comparison_v2.png', dpi=300)
+plt.savefig('svm_logistic_comparison_v2.png', dpi=300)
