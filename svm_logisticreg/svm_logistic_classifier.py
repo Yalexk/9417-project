@@ -34,6 +34,9 @@ lr_results = {}
 svm_results = {}
 baseline_results = {}
 
+results = []
+
+
 for k in HORIZONS:
     target_col = f"CO_class_t+{k}"
     
@@ -66,6 +69,13 @@ for k in HORIZONS:
         
         print(f"t+{k} done")
 
+        results.append({
+            'Horizon': f't+{h}',
+            'Naive': naive_acc,
+            'LogisticReg': lr_acc,
+            'SVM': svm_acc
+        })
+
 # Logistic Regression Comparison
 print("\n=== Logistic Regression Comparison ===")
 print("Horizon | Logistic Reg |  Naive Baseline | Improvement")
@@ -85,3 +95,8 @@ for k in [f"t+{h}" for h in HORIZONS]:
     svm = svm_results.get(k, np.nan)
     improvement = svm - naive if not np.isnan(svm) and not np.isnan(naive) else np.nan
     print(f"{k:7} | {svm:13.4f} | {naive:14.4f} | {improvement:+11.4f}")
+
+
+results_df = pd.DataFrame(results)
+results_df.to_csv('final_results.csv', index=False)
+print("\nSaved results to 'final_results.csv'")
