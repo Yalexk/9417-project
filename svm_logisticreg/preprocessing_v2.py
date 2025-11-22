@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import KNNImputer
 
-in_file = 'air+quality/AirQualityUCI.csv'
+in_file = '../air+quality/AirQualityUCI.csv'
 
 # read csv (semicolon sep, comma decimals, treat -200 variants as NaN)
 df = pd.read_csv(
@@ -137,8 +137,8 @@ final_order = date_cols + target_cols + rest_col
 train_df = train_df[final_order]
 test_df = test_df[final_order]
 
-train_df.to_csv('air+quality/AirQualityUCI_standard_scaled_v2_train.csv', index=False)
-test_df.to_csv('air+quality/AirQualityUCI_standard_scaled_v2_test.csv', index=False)
+train_df.to_csv('AirQualityUCI_standard_scaled_v2_train.csv', index=False)
+test_df.to_csv('AirQualityUCI_standard_scaled_v2_test.csv', index=False)
 
 print("preprocessing complete")
 print("regression: pollutant_raw (unscaled)")
