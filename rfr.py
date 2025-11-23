@@ -11,7 +11,7 @@ import os
 plot_dir = "rf_regression_plots"
 os.makedirs(plot_dir, exist_ok=True)
 
-df = pd.read_csv("AirQualityUCI_with_timestamp.csv")
+df = pd.read_csv("air+quality/AirQualityUCI_standard_scaled.csv")
 df["Timestamp"] = pd.to_datetime(df["Timestamp"])
 df = df.sort_values("Timestamp").reset_index(drop=True)
 
@@ -31,15 +31,13 @@ for pollutant in pollutants:
 required_cols = []
 for pollutant in pollutants:
     for h in horizons:
-        required_cols += [
-            f"{pollutant}_lag_{h}",
-            f"{pollutant}_future_{h}",
-        ]
+        required_cols.append(f"{pollutant}_lag_{h}")
+        required_cols.append(f"{pollutant}_future_{h}")
 
 df = df.dropna(subset=required_cols).reset_index(drop=True)
 
 train = df[df["Timestamp"].dt.year == 2004].copy()
-test  = df[df["Timestamp"].dt.year == 2005].copy()
+test = df[df["Timestamp"].dt.year == 2005].copy()
 
 future_cols = [f"{p}_future_{h}" for p in pollutants for h in horizons]
 
@@ -57,7 +55,6 @@ X_test = X_test.ffill().bfill().fillna(0)
 
 for p in pollutants:
     test[p] = test[p].ffill().bfill().fillna(0)
-
 
 # train ranbdom forest for each pollutant + horizon
 results = {}
@@ -78,7 +75,6 @@ for pollutant in pollutants:
             n_jobs=-1
         )
         rf.fit(X_train, y_train)
-
         preds = rf.predict(X_test)
 
         ## rmse for model and naive baseline
@@ -94,34 +90,49 @@ print("-" * 45)
 
 for pollutant in pollutants:
     for h in horizons:
-        rmse, baseline_rmse, _, _, _ = results[pollutant][h]
-        print(f"{pollutant:<12} {str(h)+'h':<8} {rmse:<10.4f} {baseline_rmse:<10.4f}")
+        rmse, base, _, _, _ = results[pollutant][h]
+        print(f"{pollutant:<12} {str(h)+'h':<8} {rmse:<10.4f} {base:<10.4f}")
     print()
 
-# save prediction plots 
+# save forecast plots
 for pollutant in pollutants:
     for h in horizons:
         rmse, base_rmse, preds, y_test, _ = results[pollutant][h]
 
         plt.figure(figsize=(12,4))
-        #first 300 for readability
         plt.plot(y_test.values[:300], label="Actual")
         plt.plot(preds[:300], label="Predicted")
         plt.title(f"{pollutant} — {h}-Hour Forecast")
         plt.xlabel("Index")
-        plt.ylabel(pollutant)
+        plt.ylabel(f"{pollutant} (Standardized Units)")
         plt.legend()
 
-        plt.savefig(
-            os.path.join(plot_dir, f"{pollutant}_{h}h_forecast.png"),
-
-        )
+        plt.savefig(os.path.join(plot_dir, f"{pollutant}_{h}h_forecast.png"))
         plt.close()
+        
+heatmap_data = np.zeros((len(pollutants), len(horizons)))
 
-# print top 15 feature importances for 1 hour models
-print("\nFeature importances (1 hour horizon):")
-for pollutant in pollutants:
-    rf = results[pollutant][1][4]
-    importances = pd.Series(rf.feature_importances_, index=feature_cols)
-    print(f"\n{pollutant}:")
-    print(importances.sort_values(ascending=False).head(15))
+for i, pollutant in enumerate(pollutants):
+    for j, h in enumerate(horizons):
+        rmse, _, _, _, _ = results[pollutant][h]
+        heatmap_data[i, j] = rmse
+
+plt.figure(figsize=(8, 6))
+plt.imshow(heatmap_data, cmap='viridis', aspect='auto')
+plt.title("Random Forest RMSE (Pollutants × Horizons)")
+plt.colorbar(label="RMSE (Standardized Units)")
+
+plt.xticks(ticks=range(len(horizons)), labels=[f"t+{h}" for h in horizons])
+plt.yticks(ticks=range(len(pollutants)), labels=pollutants)
+
+for i in range(len(pollutants)):
+    for j in range(len(horizons)):
+        val = heatmap_data[i, j]
+        plt.text(j, i, f"{val:.3f}", ha="center", va="center", color="white")
+
+plt.xlabel("Horizon")
+plt.ylabel("Pollutant")
+
+plt.tight_layout()
+plt.savefig(os.path.join(plot_dir, "rmse_heatmap.png"))
+plt.close()
