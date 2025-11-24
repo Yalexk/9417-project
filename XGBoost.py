@@ -122,6 +122,37 @@ def plot_single_forecast(
     else:
         plt.close()
 
+def generate_all_plots(df_full, feature_cols, models, target_cols, horizons, save_dir="xgb_plots", show=False, n_points=None):
+    """Generates and saves/shows forecast plots for all targets and horizons."""
+    print(f"Generating plots in directory: {save_dir}")
+    for pollutant in target_cols:
+        for H in horizons:
+            print(f"Plots for {pollutant} +{H}h...")
+            
+            # 1. Get test data and true values
+            X_test, y_true, timestamps, baseline_pred = get_test_data(df_full, pollutant, H, feature_cols)
+            
+            # 2. Get predictions
+            model = models[(pollutant, H)]
+            y_pred = model.predict(X_test)
+            
+            # Optionally slice the data to show only the first n_points
+            if n_points:
+                y_true, timestamps, baseline_pred, y_pred = \
+                    y_true[:n_points], timestamps[:n_points], baseline_pred[:n_points], y_pred[:n_points]
+            
+            # 3. Plot
+            plot_single_forecast(
+                timestamps, 
+                y_true, 
+                y_pred, 
+                baseline_pred,
+                pollutant, 
+                H, 
+                save_dir=save_dir, 
+                show=show
+            )
+    print("All plots generated.")
 
 # helper to generate heatmap
 def plot_improvement_heatmap(results_df):
@@ -287,3 +318,15 @@ print("-" * 30)
 print("Generating Plots")
 
 plot_improvement_heatmap(results_df)
+
+
+generate_all_plots(
+    df_full=df_full,
+    feature_cols=FEATURE_COLS,
+    models=models,
+    target_cols=TARGET_COLS,
+    horizons=HORIZONS,
+    save_dir="xgb_plots",
+    show=False,     
+    n_points=500  
+)
