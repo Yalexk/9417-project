@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import os
 
 # basic config 
-INPUT_CSV = "/AirQualityUCI_with_timestamp.csv"
+INPUT_CSV = "./air+quality/AirQualityUCI_with_timestamp.csv"
 OUT_DIR = "anomaly_results"
 POLLUTANTS = ['CO(GT)', 'NOx(GT)', 'NO2(GT)', 'C6H6(GT)']
 
@@ -153,3 +153,4 @@ if all_rows:
     )
 
 print("Completed. Outputs saved in:", OUT_DIR)
+
