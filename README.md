@@ -18,6 +18,4 @@ Random Forest: ./rfr_regressor.py
 
 Random Forest: ./rfr_classifier.py
 
-SVM: ./svm_logisticreg/svm_logistic_classifier.py
-
-Logistic Regression: ./svm_logisticreg/svm_logistic_classifier.py
+SVM & Logistic Regression: ./svm_logistic_classifier.py
