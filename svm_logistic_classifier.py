@@ -17,7 +17,7 @@ SVM_C_CANDIDATES = [0.1, 1, 10, 100, 1000]
 RANDOM_STATE = 42
 
 # Load data
-df = pd.read_csv("../air+quality/AirQualityUCI_standard_scaled.csv")
+df = pd.read_csv("air+quality/AirQualityUCI_standard_scaled.csv")
 df["Timestamp"] = pd.to_datetime(df["Timestamp"])
 
 # Create shifted targets
@@ -119,45 +119,46 @@ for k in [f"t+{h}" for h in HORIZONS]:
     improvement = svm - naive if not np.isnan(svm) and not np.isnan(naive) else np.nan
     print(f"{k:7} | {svm:9.4f} | {best_c:10} | {naive:14.4f} | {improvement:+11.4f}")
 
-df_results = pd.DataFrame(results)
+# for earlier SVM baseline LR plot, new plot used for all 3 models
+# df_results = pd.DataFrame(results)
 
-# generate comparison bar graph
-horizons = df_results['Horizon']
-x = np.arange(len(horizons))
-width = 0.25
+# # generate comparison bar graph
+# horizons = df_results['Horizon']
+# x = np.arange(len(horizons))
+# width = 0.25
 
-fig, ax = plt.subplots(figsize=(10, 6))
+# fig, ax = plt.subplots(figsize=(10, 6))
 
-naive_bars = ax.bar(x - width, df_results['Naive'], width, label='Naive Baseline', color='#828282')
-LR_bars = ax.bar(x, df_results['LogisticRegression'], width, label='Logistic Regression', color='#0041C2')
-SVM_bars = ax.bar(x + width, df_results['SVM'], width, label='SVM (RBF, best C)', color='#008000')
+# naive_bars = ax.bar(x - width, df_results['Naive'], width, label='Naive Baseline', color='#828282')
+# LR_bars = ax.bar(x, df_results['LogisticRegression'], width, label='Logistic Regression', color='#0041C2')
+# SVM_bars = ax.bar(x + width, df_results['SVM'], width, label='SVM (RBF, best C)', color='#008000')
 
-# Formatting
-ax.set_ylabel('Accuracy')
-ax.set_title('Classification Model Comparison - Naive/Logistic Regression/SVM')
-ax.set_xticks(x)
-ax.set_xticklabels(horizons)
-ax.legend(loc='lower right')
-ax.grid(axis='y', linestyle='--', alpha=0.6)
+# # Formatting
+# ax.set_ylabel('Accuracy')
+# ax.set_title('Classification Model Comparison - Naive/Logistic Regression/SVM')
+# ax.set_xticks(x)
+# ax.set_xticklabels(horizons)
+# ax.legend(loc='lower right')
+# ax.grid(axis='y', linestyle='--', alpha=0.6)
 
-# set bottom of graph
-lowest_score = df_results[['Naive', 'LogisticRegression', 'SVM']].min().min()
-bottom = max(0, lowest_score - 0.1)
-ax.set_ylim(bottom=bottom, top=1.0)
+# # set bottom of graph
+# lowest_score = df_results[['Naive', 'LogisticRegression', 'SVM']].min().min()
+# bottom = max(0, lowest_score - 0.1)
+# ax.set_ylim(bottom=bottom, top=1.0)
 
-# add accuracy on top of each bar
-def label(models):
-    for model in models:
-        height = model.get_height()
-        ax.annotate(f'{height:.2f}',
-                    xy=(model.get_x() + model.get_width() / 2, height),
-                    xytext=(0, 3),
-                    textcoords="offset points",
-                    ha='center', va='bottom', fontsize=11)
+# # add accuracy on top of each bar
+# def label(models):
+#     for model in models:
+#         height = model.get_height()
+#         ax.annotate(f'{height:.2f}',
+#                     xy=(model.get_x() + model.get_width() / 2, height),
+#                     xytext=(0, 3),
+#                     textcoords="offset points",
+#                     ha='center', va='bottom', fontsize=11)
 
-label(naive_bars)
-label(LR_bars)
-label(SVM_bars)
+# label(naive_bars)
+# label(LR_bars)
+# label(SVM_bars)
 
-plt.tight_layout()
-plt.savefig('svm_logistic_comparison.png', dpi=300)
+# plt.tight_layout()
+# plt.savefig('svm_logistic_comparison.png', dpi=300)
