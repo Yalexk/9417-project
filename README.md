@@ -1,5 +1,25 @@
 # 9417-project
 
+**Preprocessing**
+
+Implementation: ./preprocessing.py
+
+Output: ./air+quality/*
+
+**Anomaly Results**
+
+./anomaly_results
+
+**Regression**
+
+Random Forest: ./rfr_regressor.py
+
+**Classification**
+
+Random Forest: ./rfr_classifier.py
+
+SVM & Logistic Regression: ./svm_logistic_classifier.py
+
 
 Air Quality Time Series Forecasting (XGBoost)
 
@@ -49,7 +69,7 @@ Evaluation
 
 Tests all models on data from 2005
 
-Compares XGBoost RMSE against a Naïve Baseline	​
+Compares XGBoost RMSE against a Naïve Baseline
 
 Output
 
